@@ -1,0 +1,47 @@
+.wl-wrap { margin: 12px 0; }
+
+.wl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.wl-btn:focus-visible { outline: 2px solid var(--wl-color, #e0245e); outline-offset: 2px; }
+
+.wl-heart {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: var(--wl-color, #e0245e);
+  stroke-width: 2;
+  transition: transform 0.15s ease;
+}
+.wl-btn.is-active .wl-heart { fill: var(--wl-color, #e0245e); }
+.wl-btn:active .wl-heart { transform: scale(0.85); }
+
+.wl-page { padding: 24px 0; }
+.wl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+}
+.wl-card { display: flex; flex-direction: column; gap: 8px; }
+.wl-card__link { display: flex; flex-direction: column; gap: 6px; color: inherit; text-decoration: none; }
+.wl-card__img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
+.wl-card__price { opacity: 0.75; }
+.wl-card__remove {
+  align-self: flex-start;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}

@@ -1,0 +1,19 @@
+<div class="wl-page" data-wl-page data-wl-empty="{{ block.settings.empty_text | escape }}" {{ block.shopify_attributes }}>
+  {% if block.settings.heading != blank %}
+    <h2 class="wl-page__heading">{{ block.settings.heading }}</h2>
+  {% endif %}
+  <div class="wl-grid" data-wl-grid></div>
+</div>
+
+{% schema %}
+{
+  "name": "Wishlist page",
+  "target": "section",
+  "javascript": "wishlist.js",
+  "stylesheet": "wishlist.css",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "My wishlist" },
+    { "type": "text", "id": "empty_text", "label": "Empty message", "default": "Your wishlist is empty." }
+  ]
+}
+{% endschema %}
