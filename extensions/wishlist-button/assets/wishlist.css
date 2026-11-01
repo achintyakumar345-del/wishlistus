@@ -45,3 +45,54 @@
   text-decoration: underline;
   cursor: pointer;
 }
+/* ---- toast ---- */
+.wl-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 2147483000;
+  max-width: calc(100vw - 32px);
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  font: inherit;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.wl-toast--top { top: 24px; bottom: auto; transform: translate(-50%, -12px); }
+.wl-toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
+.wl-toast:empty { display: none; }
+
+/* ---- heart animations ---- */
+.wl-heart.wl-anim-pop { animation: wl-pop 0.35s ease; }
+.wl-heart.wl-anim-bounce { animation: wl-bounce 0.5s ease; }
+.wl-heart.wl-anim-pulse { animation: wl-pulse 0.7s ease; }
+
+@keyframes wl-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+@keyframes wl-bounce {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(-6px); }
+  65% { transform: translateY(1px); }
+}
+@keyframes wl-pulse {
+  0%, 50%, 100% { transform: scale(1); }
+  25%, 75% { transform: scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-heart,
+  .wl-btn:active .wl-heart { transition: none; transform: none; }
+  .wl-heart[class*='wl-anim-'] { animation: none; }
+  .wl-toast,
+  .wl-toast--top,
+  .wl-toast.is-visible { transition: none; transform: translate(-50%, 0); }
+}

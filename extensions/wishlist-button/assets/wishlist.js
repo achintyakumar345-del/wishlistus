@@ -6,8 +6,30 @@
   var root = (window.Shopify && Shopify.routes && Shopify.routes.root) || '/';
   var PROXY = root + 'apps/wishlist';
 
+  // Keep in sync with DEFAULTS in app/routes/app.settings.jsx
+  var DEFAULTS = {
+    toastEnabled: true,
+    toastAddedText: 'Added to your wishlist',
+    toastRemovedText: 'Removed from your wishlist',
+    toastPosition: 'bottom',
+    toastDuration: 3,
+    animation: 'pop'
+  };
+
   var loggedIn = false;
   var items = readLocal();
+  var toastEl = null;
+  var toastTimer = null;
+
+  // ---- merchant settings (saved from the app's Settings page) ----
+  function getSettings() {
+    var settings = {};
+    var el = document.querySelector('[data-wl-settings]');
+    try { settings = (el && JSON.parse(el.textContent)) || {}; } catch (e) {}
+    var merged = {};
+    for (var k in DEFAULTS) merged[k] = settings[k] != null ? settings[k] : DEFAULTS[k];
+    return merged;
+  }
 
   // ---- browser storage (guests) ----
   function readLocal() {
@@ -51,11 +73,48 @@
       .catch(function () { loggedIn = false; });
   }
 
+  // Returns true if the product was added, false if it was removed
   function toggle(handle) {
     var i = items.indexOf(handle);
     if (i === -1) items.push(handle); else items.splice(i, 1);
     save();
     render();
+    return i === -1;
+  }
+
+  // ---- feedback ----
+  // The toast element is created up front so screen readers are already watching it
+  function createToast() {
+    if (toastEl) return;
+    toastEl = document.createElement('div');
+    toastEl.className = 'wl-toast';
+    toastEl.setAttribute('role', 'status');
+    toastEl.setAttribute('aria-live', 'polite');
+    document.body.appendChild(toastEl);
+  }
+
+  function showToast(added) {
+    var s = getSettings();
+    if (!s.toastEnabled) return;
+    createToast();
+    toastEl.textContent = added ? s.toastAddedText : s.toastRemovedText;
+    toastEl.classList.toggle('wl-toast--top', s.toastPosition === 'top');
+    toastEl.classList.add('is-visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove('is-visible');
+    }, (Number(s.toastDuration) || DEFAULTS.toastDuration) * 1000);
+  }
+
+  function animate(btn) {
+    var name = getSettings().animation;
+    var heart = btn.querySelector('.wl-heart');
+    if (!heart || ['pop', 'bounce', 'pulse'].indexOf(name) === -1) return;
+    var cls = 'wl-anim-' + name;
+    heart.classList.remove(cls);
+    void heart.getBoundingClientRect(); // restart the animation on repeat clicks
+    heart.classList.add(cls);
+    heart.addEventListener('animationend', function () { heart.classList.remove(cls); }, { once: true });
   }
 
   // ---- rendering ----
@@ -150,9 +209,13 @@
   // ---- events ----
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('.wl-btn');
-    if (btn) { toggle(btn.dataset.wlHandle); return; }
+    if (btn) {
+      showToast(toggle(btn.dataset.wlHandle));
+      animate(btn);
+      return;
+    }
     var rm = e.target.closest('[data-wl-remove-handle]');
-    if (rm) toggle(rm.dataset.wlRemoveHandle);
+    if (rm) showToast(toggle(rm.dataset.wlRemoveHandle));
   });
 
   window.addEventListener('storage', function (e) {
@@ -161,6 +224,7 @@
   document.addEventListener('shopify:section:load', render);
 
   function start() {
+    createToast();
     render();
     syncFromAccount().then(render);
   }
