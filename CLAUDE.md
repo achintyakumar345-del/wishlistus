@@ -11,5 +11,6 @@
   - Merchant settings saved to a shop metafield and read by the storefront.
   - Wishlist add/remove events stored in the app's own database (Prisma) for analytics at scale.
 - **How to work with me:** I'm a PM learning to build, not a developer. Explain changes in plain language, make one feature at a time, and use Polaris web components and the Shopify docs MCP.
+- **Roadmap:** See @ROADMAP.md for the feature plan; tick items off as they're completed.
 
 @AGENTS.md
